@@ -1,7 +1,7 @@
 #include<iostream>
+#include<locale.h>
 #include<conio.h>
 #include<string>
-#include<locale.h>
 
 using namespace std;
 
@@ -49,20 +49,78 @@ struct Consulta{
 	float valor;
 };
 
+//Função - verificar se já existe o código inserido
+template <typename V>
+bool verificarExistencia(V vetor[], int total, int codigo){
+	for (int i = 0; i < total; i++) {
+        if (vetor[i].codigo == codigo){
+        	return true;	
+		}
+    }
+    
+    return false;
+}
+
+//Função - cancelar ação -> valores INT
+bool verificarCancelamento(int valor){
+	if(valor == 0){
+		cout << "Ação cancelada.\n";
+		system("pause");
+        system("cls");
+        return true;
+	}
+	
+	return false;
+}
+
+//Função - cancelar ação -> valores STRING
+bool verificarCancelamento(const string& valor){
+	if(valor == "0"){
+		cout << "Ação cancelada.\n";
+		system("pause");
+		system("cls");
+		return true;
+	}
+	
+	return false;
+}
+
 //  ---- CIDADE ----
 void cadastrarCidade(Cidade cidades[], int& totalCidades){
 	Cidade novaCidade;
 
-	cout << "\n ----- Cadastro de Cidade ------\n\n";
-	cout << "Código da cidade: ";
-	cin >> novaCidade.codigo;
-	cin.ignore();
+	cout << "\n ----- Cadastro de Cidade ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
+		
+	while(true){
+		cout << "Código da cidade: ";
+		cin >> novaCidade.codigo;
+		
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Entrada inválida! Digite apenas números.\n\n";
+			continue;
+		}
+		
+		if(verificarCancelamento(novaCidade.codigo)) return;
+		cin.ignore();
+		
+		if(verificarExistencia(cidades, totalCidades, novaCidade.codigo)) {
+			cout << "Código já cadastrado! Tente novamente.\n\n";
+			continue;
+		}
+		
+		break;
+	}
 
 	cout << "Nome da cidade: ";
 	getline(cin, novaCidade.nome);
+	if(verificarCancelamento(novaCidade.nome)) return;
 
 	cout << "UF: ";
 	cin >> novaCidade.uf;
+	if(verificarCancelamento(novaCidade.uf)) return;
 
 	cidades[totalCidades] = novaCidade;
 	totalCidades++;
@@ -72,110 +130,39 @@ void cadastrarCidade(Cidade cidades[], int& totalCidades){
 	system("cls");
 }
 
-//  ---- RAÇA ----
-void cadastrarRaca(Raca racas[], int& totalRacas){
-	Raca novaRaca;
-
-	cout << "\n ----- Cadastro de Raça ------\n\n";
-	cout << "Código da raça: ";
-	cin >> novaRaca.codigo;
-	cin.ignore();
-
-	cout << "Descrição: ";
-	getline(cin, novaRaca.descricao);
+//  ---- TUTOR ----
+void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int totalCidades){
+	Tutor novoTutor;
+	bool existeTutor;
 	
-	racas[totalRacas] = novaRaca;
-	totalRacas++;
-
-	cout << "\nRaça cadastrada com sucesso!\n";
-	system("pause");
-	system("cls");
-}
-
-//  ---- ANIMAL ----
-void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int totalRacas, Tutor tutores[], int totalTutores, Cidade cidades[], int totalCidades){
-	Animal novoAnimal;
-	bool busca = false;
-	
-	if (totalTutores == 0 || totalRacas == 0) {
-	    cout << "Antes de cadastrar um animal, cadastre pelo menos um tutor e uma raça.\n";
+	if (totalCidades == 0) {
+	    cout << "Antes de cadastrar um tutor, cadastre pelo menos uma cidade para esse tutor.\n\n";
 	    system("pause");
 	    system("cls");
 	    return;
 	}
 
-	cout << "\n ----- Cadastro de Animal ------\n\n";
-	cout << "Código do Animal: ";
-	cin >> novoAnimal.codigo;
-	cin.ignore();
-
-	cout << "Nome: ";
-	getline(cin, novoAnimal.nome);
-
-	cout << "Códigos das raças: \n";
-		for(int i = 0; i < totalRacas; i++){
-			cout << "   [" << racas[i].codigo << "] " << racas[i].descricao << endl;
-		}
-		
-		cout << "Selecione uma raça: ";
-		cin >> novoAnimal.codRaca;
-
-		for(int i = 0; i < totalRacas; i++){
-			if(racas[i].codigo == novoAnimal.codRaca){
-			cout << "\nRaça: " << racas[i].descricao << endl;
-			busca = true;
-			break;
-		}
-	}
-
-	cout << "Idade: ";
-	cin >> novoAnimal.idade;
-
-	cout << "Peso (Kg): ";
-	cin >> novoAnimal.peso;
-
-	cout << "Códigos dos tutores: \n";
-		for(int i = 0; i < totalTutores; i++){
-			cout << "   [" << tutores[i].codigo << "] " << tutores[i].nome << endl;
-		}
-		
-		cout << "Selecione um tutor: ";
-		cin >> novoAnimal.codTutor;
-	
-		for(int i = 0; i < totalTutores; i++){
-			if(tutores[i].codigo == novoAnimal.codTutor){
-				
-				string nomeCidade, siglaEstado;
-				for (int j = 0; j < totalCidades; j++) {
-					if (cidades[j].codigo == tutores[i].codCidade) {
-						nomeCidade = cidades[j].nome;
-						siglaEstado = cidades[j].uf;
-						break;
-					}
-				}
-				cout << "\nTutor: " << tutores[i].nome << " de " << nomeCidade << ", " << siglaEstado << endl;
-				busca = true;
-				break;
-		}
-	}
-	
-	animais[totalAnimais] = novoAnimal;
-	totalAnimais++;
-
-	cout << "\nAnimal cadastrado com sucesso!\n";
-	system("pause");
-	system("cls");
-}
-
-//  ---- TUTOR ----
-void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int totalCidades){
-	Tutor novoTutor;
-	bool busca = false;
-
 	cout << "\n ----- Cadastro de Tutor ------\n\n";
-	cout << "Código do tutor: ";
-	cin >> novoTutor.codigo;
-	cin.ignore();
+
+	while(true){
+		cout << "Código do tutor: ";
+		cin >> novoTutor.codigo;
+		
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Entrada inválida! Digite apenas números.\n\n";
+			continue;
+		}
+		cin.ignore();
+		
+		if(verificarExistencia(tutores, totalTutores, novoTutor.codigo)) {
+			cout << "Código já cadastrado! Tente novamente.\n\n";
+			continue;
+		}
+		
+		break;
+	}
 
 	cout << "Nome: ";
 	getline(cin, novoTutor.nome);
@@ -191,26 +178,34 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 	getline(cin, novoTutor.endereco);
 
 	cout << "Códigos das cidades\n";
-	for(int i = 0; i < totalCidades; i++){
-		cout << "   [" << cidades[i].codigo << "] " << cidades[i].nome << endl;
-	}
-	cout << "Selecione uma cidade: ";
+			for(int i = 0; i < totalCidades; i++){
+				cout << "   [" << cidades[i].codigo << "] " << cidades[i].nome << endl;
+			}
 
-	cin >> novoTutor.codCidade;
-
-	for(int i = 0; i < totalCidades; i++){
-		if(cidades[i].codigo == novoTutor.codCidade){
-			cout << "\nCidade: " << cidades[i].nome << ", " << cidades[i].uf << endl;
-			busca = true;
-			break;
-		}
-	}
-
-	if (!busca) {
-		cout << "Cidade não encontrada.\n";
-		return;
-	}
+	while(true){
+		cout << "Selecione uma cidade: ";
+		cin >> novoTutor.codCidade;
 		
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Entrada inválida! Digite apenas números.\n";
+			continue;
+		}
+	
+		bool encontrado = false;
+		for(int i = 0; i < totalCidades; i++){
+			if(cidades[i].codigo == novoTutor.codCidade){
+				cout << "\nCidade: " << cidades[i].nome << ", " << cidades[i].uf << endl;
+				encontrado = true;
+				break;
+			}
+		}
+		
+		if (encontrado) break;
+			cout << "Cidade não encontrada! Tente novamente.\n";
+	}
+	
 	tutores[totalTutores] = novoTutor;
 	totalTutores++;
 
@@ -219,15 +214,205 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 	system("cls");
 }
 
+//  ---- RAÇA ----
+void cadastrarRaca(Raca racas[], int& totalRacas){
+	Raca novaRaca;
+	
+	cout << "\n ----- Cadastro de Raça ------\n\n";
+	
+	while(true){
+		cout << "Código da raça: ";
+		cin >> novaRaca.codigo;
+		
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Entrada inválida! Digite apenas números.\n\n";
+			continue;
+		}
+		cin.ignore();
+		
+		if(verificarExistencia(racas, totalRacas, novaRaca.codigo)) {
+			cout << "Código já cadastrado! Tente novamente.\n\n";
+			continue;
+		}
+		
+		break;
+	}
+
+	cout << "Descrição: ";
+	getline(cin, novaRaca.descricao);
+	
+	racas[totalRacas] = novaRaca;
+	totalRacas++;
+
+	cout << "\nRaça cadastrada com sucesso!\n";
+	system("pause");
+	system("cls");
+}
+
+//  ---- ANIMAL ----
+void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int totalRacas, Tutor tutores[], int totalTutores, Cidade cidades[], int totalCidades){
+	Animal novoAnimal;
+	
+	if (totalTutores == 0 || totalRacas == 0) {
+	    cout << "Antes de cadastrar um animal, cadastre pelo menos um tutor e uma raça.\n\n";
+	    system("pause");
+	    system("cls");
+	    return;
+	}
+
+	cout << "\n ----- Cadastro de Animal ------\n\n";
+	
+	while(true){
+		cout << "Código do Animal: ";
+		cin >> novoAnimal.codigo;
+		
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Entrada inválida! Digite apenas números.\n\n";
+			continue;
+		}
+		cin.ignore();
+		
+		if(verificarExistencia(animais, totalAnimais, novoAnimal.codigo)) {
+			cout << "Código já cadastrado! Tente novamente.\n\n";
+			continue;
+		}
+		
+		break;
+	}
+
+	cout << "Nome: ";
+	getline(cin, novoAnimal.nome);
+
+	cout << "Códigos das raças: \n";
+		for(int i = 0; i < totalRacas; i++){
+			cout << "   [" << racas[i].codigo << "] " << racas[i].descricao << endl;
+		}
+	
+		while(true){
+			cout << "Selecione uma raça: ";
+			cin >> novoAnimal.codRaca;
+			
+			if (cin.fail()) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Entrada inválida! Digite apenas números.\n";
+				continue;
+			}
+		
+			bool encontrado = false;
+			for(int i = 0; i < totalRacas; i++){
+				if(racas[i].codigo == novoAnimal.codRaca){
+					cout << "\nRaça: " << racas[i].descricao << endl;
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (encontrado) break;
+				cout << "Raça não encontrada! Tente novamente.\n";
+		}
+
+	cout << "Idade: ";
+	cin >> novoAnimal.idade;
+	while (cin.fail() || novoAnimal.idade < 0) {
+	    cin.clear();
+	    cin.ignore(1000, '\n');
+	    cout << "Entrada inválida! Digite uma idade válida: ";
+	    cin >> novoAnimal.idade;
+	}
+
+	cout << "Peso (Kg): ";
+	cin >> novoAnimal.peso;
+	while (cin.fail() || novoAnimal.peso < 0) {
+	    cin.clear();
+	    cin.ignore(1000, '\n');
+	    cout << "Entrada inválida! Digite um peso válido: ";
+	    cin >> novoAnimal.peso;
+	}
+
+	cout << "Códigos dos tutores: \n";
+		for(int i = 0; i < totalTutores; i++){
+			cout << "   [" << tutores[i].codigo << "] " << tutores[i].nome << endl;
+		}
+		
+		while(true){
+			cout << "Selecione um tutor: ";
+			cin >> novoAnimal.codTutor;
+			
+			if (cin.fail()) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Entrada inválida! Digite apenas números.\n";
+				continue;
+			}
+		
+			bool encontrado = false;			
+			for(int i = 0; i < totalTutores; i++){
+				if(tutores[i].codigo == novoAnimal.codTutor){
+					string nomeCidade, siglaEstado;
+					
+					for (int j = 0; j < totalCidades; j++) {
+						if (cidades[j].codigo == tutores[i].codCidade) {
+							nomeCidade = cidades[j].nome;
+							siglaEstado = cidades[j].uf;
+							break;
+						}
+					}
+					
+					cout << "\nTutor: " << tutores[i].nome << " de " << nomeCidade << ", " << siglaEstado << endl;
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (encontrado) break;
+				cout << "Tutor não encontrado! Tente novamente.\n";
+		}
+	
+	animais[totalAnimais] = novoAnimal;
+	totalAnimais++;
+
+	cout << "\nAnimal cadastrado com sucesso!\n";
+	system("pause");
+	system("cls");
+}
+
 //  ---- VETERINÁRIO ----
 void cadastrarVeterinario(Veterinario veterinarios[], int& totalVets, Cidade cidades[], int totalCidades){
 	Veterinario novoVet;
-	bool busca = false;
+	
+	if (totalCidades == 0) {
+	    cout << "Antes de cadastrar um veterinário, cadastre pelo menos uma cidade para esse veterinário.\n\n";
+	    system("pause");
+	    system("cls");
+	    return;
+	}
 
 	cout << "\n ----- Cadastro de Veterinário ------\n\n";
-	cout << "Código do veterinário: ";
-	cin >> novoVet.codigo;
-	cin.ignore();
+	
+	while(true){
+		cout << "Código do veterinário: ";
+		cin >> novoVet.codigo;
+		
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Entrada inválida! Digite apenas números.\n\n";
+			continue;
+		}
+		cin.ignore();
+		
+		if(verificarExistencia(veterinarios, totalVets, novoVet.codigo)) {
+			cout << "Código já cadastrado! Tente novamente.\n\n";
+			continue;
+		}
+		
+		break;
+	}
 
 	cout << "Nome: ";
 	getline(cin, novoVet.nome);
@@ -236,25 +421,33 @@ void cadastrarVeterinario(Veterinario veterinarios[], int& totalVets, Cidade cid
 	getline(cin, novoVet.endereco);
 
 	cout << "Códigos das cidades\n";
-	for(int i = 0; i < totalCidades; i++){
-		cout << "   [" << cidades[i].codigo << "] " << cidades[i].nome << endl;
-	}
-	
-	cout << "Selecione uma cidade: ";
-	cin >> novoVet.codCidade;
-
-	for(int i = 0; i < totalCidades; i++){
-		if(cidades[i].codigo == novoVet.codCidade){
-			cout << "\nCidade: " << cidades[i].nome << ", " << cidades[i].uf << endl;
-			busca = true;
-			break;
+		for(int i = 0; i < totalCidades; i++){
+			cout << "   [" << cidades[i].codigo << "] " << cidades[i].nome << endl;
 		}
-	}
-
-	if (!busca) {
-		cout << "Cidade não encontrada.\n";
-		return;
-	}
+		
+		while(true){
+			cout << "Selecione uma cidade: ";
+			cin >> novoVet.codCidade;
+			
+			if (cin.fail()) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Entrada inválida! Digite apenas números.\n";
+				continue;
+			}
+		
+			bool encontrado = false;
+			for(int i = 0; i < totalCidades; i++){
+				if(cidades[i].codigo == novoVet.codCidade){
+					cout << "\nCidade: " << cidades[i].nome << ", " << cidades[i].uf << endl;
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (encontrado) break;
+				cout << "Cidade não encontrada! Tente novamente.\n";
+		}
 	
 	veterinarios[totalVets] = novoVet;
 	totalVets++;
@@ -269,10 +462,9 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 					Veterinario veterinarios[], int totalVets, Raca racas[], int totalRacas, 
 					Tutor tutores[], int totalTutores, Cidade cidades[], int totalCidades){
 	Consulta novaConsulta;
-	bool busca = false;
 	
 	if (totalAnimais == 0 || totalVets == 0) {
-		cout << "Cadastre ao menos um animal e um veterinário antes de registrar uma consulta.\n";
+		cout << "Cadastre ao menos um animal e um veterinário antes de registrar uma consulta.\n\n";
 		system("pause");
 		system("cls");
 		return;
@@ -286,10 +478,19 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 			cout << "   [" << animais[i].codigo << "] " << animais[i].nome << endl;
 		}
 		
-		cout << "Selecione um animal: ";
-		cin >> novaConsulta.codAnimal;
-	
-		for(int i = 0; i < totalAnimais; i++){
+		while(true){
+			cout << "Selecione um animal: ";
+			cin >> novaConsulta.codAnimal;
+			
+			if (cin.fail()) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Entrada inválida! Digite apenas números.\n";
+				continue;
+			}
+		
+			bool encontrado = false;	
+			for(int i = 0; i < totalAnimais; i++){
 			if(animais[i].codigo == novaConsulta.codAnimal){
 				
 				string nomeRaca, nomeTutor;
@@ -309,9 +510,13 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 	            }
 				
 				cout << "Animal: " << animais[i].nome << " | Raça: " << nomeRaca << " | Tutor: " << nomeTutor << endl;
-				busca = true;
+				encontrado = true;
 				break;
+				}
 			}
+			
+			if (encontrado) break;
+				cout << "Animal não encontrado! Tente novamente.\n";
 		}
 	
 	cout << "Códigos dos veterinários \n";
@@ -319,25 +524,38 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 			cout << "   [" << veterinarios[i].codigo << "] " << veterinarios[i].nome << endl;
 		}
 		
-		cout << "Selecione um veterinário: ";
-		cin >> novaConsulta.codVet;
-	
-		for(int i = 0; i < totalVets; i++){
-			if(veterinarios[i].codigo == novaConsulta.codVet){
-				
-				string nomeCidade;
-				
-				for(int j = 0; j < totalCidades; j++){
-					if(cidades[j].codigo == veterinarios[i].codCidade){
-						nomeCidade = cidades[j].nome;
-						break;
-					}
-				}
-				
-				cout << "Veterinário: " << veterinarios[i].nome << " | Cidade: " << nomeCidade << endl;
-				busca = true;
-				break;
+		while(true){
+			cout << "Selecione um veterinário: ";
+			cin >> novaConsulta.codVet;
+			
+			if (cin.fail()) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Entrada inválida! Digite apenas números.\n";
+				continue;
 			}
+		
+			bool encontrado = false;
+			for(int i = 0; i < totalVets; i++){
+				if(veterinarios[i].codigo == novaConsulta.codVet){
+					
+					string nomeCidade;
+					
+					for(int j = 0; j < totalCidades; j++){
+						if(cidades[j].codigo == veterinarios[i].codCidade){
+							nomeCidade = cidades[j].nome;
+							break;
+						}
+					}
+					
+					cout << "Veterinário: " << veterinarios[i].nome << " | Cidade: " << nomeCidade << endl;
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (encontrado) break;
+				cout << "Veterinário não encontrado! Tente novamente.\n";
 		}
 		
 	cout << "Data da consulta: ";
@@ -346,8 +564,14 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 	
 	cout << "Valor: R$ ";
 	cin >> novaConsulta.valor;
+	while (cin.fail() || novaConsulta.valor < 0) {
+	    cin.clear();
+	    cin.ignore(1000, '\n');
+	    cout << "Entrada inválida! Digite um peso válido: ";
+	    cin >> novaConsulta.valor;
+	}
 	
-	novaConsulta.codigo = totalConsultas + 1;
+	novaConsulta.codigo = totalConsultas;
 	consultas[totalConsultas] = novaConsulta;
     totalConsultas++;
 	
@@ -357,12 +581,13 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 }
 
 //  ---- CONSULTA -> POR DATA ----
-void consultaPorData(Consulta consultas[], int totalConsultas, Animal animais[], int totalAnimais, Veterinario veterinarios[], int totalVets){
+void consultaPorData(Consulta consultas[], int totalConsultas, Animal animais[], int totalAnimais, 
+					 Veterinario veterinarios[], int totalVets){
 	string dataInicio, dataFinal;
-	float totalValor = 0;
+	float valorTotal = 0;
 	
 	if (totalConsultas == 0) {
-		cout << "Sem consultas para filtrar.\n";
+		cout << "Sem consultas para filtrar.\n\n";
 		system("pause");
 		system("cls");
 		return;
@@ -375,7 +600,7 @@ void consultaPorData(Consulta consultas[], int totalConsultas, Animal animais[],
 	cin >> dataFinal;
 	
 	cout << "\nConsultas realizadas entre " << dataInicio << " e " << dataFinal << ":\n";
-	cout << "Data\t\t" << "Animal\t\t" << "Veterinário\t" << "Valor\t\n";
+	cout << "Código\t" << "Data\t\t" << "Animal\t\t" << "Veterinário\t\t" << "Valor\t\n";
 	for(int i = 0; i < totalConsultas; i++){
 		if(consultas[i].data >= dataInicio && consultas[i].data <= dataFinal){
 	
@@ -395,28 +620,88 @@ void consultaPorData(Consulta consultas[], int totalConsultas, Animal animais[],
 				}
 			}
 			
-			cout << consultas[i].data << "\t" 
+			cout << consultas[i].codigo << "\t"
+				 << consultas[i].data << "\t" 
 				 << nomeAnimal << "\t\t" 
-				 << nomeVeterinario << "\t" 
+				 << nomeVeterinario << "\t\t" 
 				 << "R$ " << consultas[i].valor << endl;
 
-			totalValor += consultas[i].valor;
+			valorTotal += consultas[i].valor;
 		}
 		
 	}
 	
-	cout << "\nValor total das consultas no período: R$ " << totalValor << "\n";
+	cout << "\nValor total das consultas no período: R$ " << valorTotal << "\n";
 	system("pause");
 	system("cls");
 }
 
 //  ---- CONSULTA -> POR VETERINÁRIO ----
-void consultaPorVet(){
+void consultaPorVet(Consulta consultas[], int totalConsultas, Animal animais[], int totalAnimais, 
+					Veterinario veterinarios[], int totalVets){
+	string dataInicio, dataFinal;
+	Veterinario vetSelect;
+	float valorTotal = 0;
 	
+	if (totalConsultas == 0) {
+		cout << "Sem consultas para filtrar.\n\n";
+		system("pause");
+		system("cls");
+		return;
+	}
+	
+	cout << "\n ----- Consultas por datas ------\n";
+	cout << "Data inicial: ";
+	cin >> dataInicio;
+	cout << "Data final: ";
+	cin >> dataFinal;
+	
+	cout << "Qual veterinário você gostaria buscar: \n";
+		for(int i = 0; i < totalVets; i++){
+			cout << "   [" << veterinarios[i].codigo << "] " << veterinarios[i].nome << endl;
+		}
+		
+		cout << "Selecione um veterinário: ";
+		cin >> vetSelect.codigo;
+		
+		for(int i = 0; i < totalVets; i++){
+			if(veterinarios[i].codigo == vetSelect.codigo){
+				vetSelect = veterinarios[i];
+				break;
+			}
+		}
+	
+	cout << "\nConsultas do veterinário: " << vetSelect.nome;
+	cout << "\nPeríodo: " << dataInicio << " e " << dataFinal << ":\n\n";
+	
+	cout << "Código\t" << "Data\t\t" << "Animal\t\t" << "Valor\t\n";
+	for(int i = 0; i < totalConsultas; i++){
+		if(consultas[i].data >= dataInicio && consultas[i].data <= dataFinal && consultas[i].codVet == vetSelect.codigo){
+			string nomeAnimal;
+			
+			for(int a = 0; a < totalAnimais; a++){
+				if(animais[a].codigo == consultas[i].codAnimal){
+					nomeAnimal = animais[a].nome;
+					break;
+				}
+			}
+			
+			cout << consultas[i].codigo << "\t" 
+				 << consultas[i].data << "\t" 
+				 << nomeAnimal << "\t\t" 
+				 << "R$" << consultas[i].valor << endl;
+			
+			valorTotal += consultas[i].valor;
+		}
+	}
+	
+	cout << "\nValor total das consultas: R$ " << valorTotal << "\n";
+	system("pause");
+	system("cls");
 }
 
 int main(){
-	setlocale(LC_ALL,"");
+	setlocale(LC_ALL,"Portuguese");
 	
 	Cidade cidades[100];
 	int totalCidades = 0;
@@ -437,30 +722,34 @@ int main(){
 	int totalConsultas = 0;
 
 	//	Seeders
-//	cidades[0] = {1, "Assis", "SP"};
-//	cidades[1] = {2, "Londrina", "PR"};
-//	totalCidades = 2;
-//	
-//	racas[0] = {1, "Poodle"};
-//	racas[1] = {2, "Labrador"};
-//	totalRacas = 2;
-//	
-//	tutores[0] = {1, "Caio Venancio", "12345678901", "Rua A, 123", 1};
-//	tutores[1] = {2, "Matheus", "98765432100", "Av. B, 456", 2};
-//	totalTutores = 2;
-//	
-//	animais[0] = {1, "Thor", 1, 3, 12.5, 1};
-//	animais[1] = {2, "Pipoca", 2, 2, 10.0, 2};
-//	totalAnimais = 2;
-//	
-//	veterinarios[0] = {1, "Dr. Carlos", "Rua C, 99", 1};
-//	veterinarios[1] = {2, "Dra. Ana", "Av. D, 88", 2};
-//	totalVets = 2;
+	cidades[0] = {1, "Assis", "SP"};
+	cidades[1] = {2, "Londrina", "PR"};
+	totalCidades = 2;
+		
+	racas[0] = {1, "Poodle"};
+	racas[1] = {2, "Labrador"};
+	totalRacas = 2;
+	
+	tutores[0] = {1, "Caio Venancio", "12345678901", "Rua A, 123", 1};
+	tutores[1] = {2, "Matheus", "98765432100", "Av. B, 456", 2};
+	totalTutores = 2;
+	
+	animais[0] = {1, "Thor", 1, 3, 12.5, 1};
+	animais[1] = {2, "Pipoca", 2, 2, 10.0, 2};
+	totalAnimais = 2;
+
+	veterinarios[0] = {1, "Dr. Carlos", "Rua C, 99", 1};
+	veterinarios[1] = {2, "Dra. Ana", "Av. D, 88", 2};
+	totalVets = 2;
+	
+	consultas[0] = {0, 1, 2, "2025-05-01", 150.50};
+	consultas[1] = {1, 2, 1, "2025-05-15", 224.99};
+	totalConsultas = 2;
 
 	int op;
 
 	do{
-		cout << " Menu Principal - Clínica Veterinária \n";
+		cout << " Menu Principal - Clínica Veterinária \n\n";
 		cout << " [1] Cadastrar cidade\n";
 		cout << " [2] Cadastrar tutor \n";
 		cout << " [3] Cadastrar raça \n";
@@ -499,13 +788,15 @@ int main(){
 			consultaPorData(consultas, totalConsultas, animais, totalAnimais, veterinarios, totalVets);
 			break;
 		case 8:
-			cout << "8";
+			consultaPorVet(consultas, totalConsultas, animais, totalAnimais, veterinarios, totalVets);
 			break;
 		case 0:
 			cout << "Saindo do programa... \n";
 			break;
 		default:
-			cout << "Opção inválida. \n";
+			cout << "Opção inválida.\n";
+			system("pause");
+			system("cls");
 		}
 	} while (op != 0);
 }
