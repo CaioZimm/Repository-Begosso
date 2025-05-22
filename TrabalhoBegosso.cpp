@@ -133,7 +133,6 @@ void cadastrarCidade(Cidade cidades[], int& totalCidades){
 //  ---- TUTOR ----
 void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int totalCidades){
 	Tutor novoTutor;
-	bool existeTutor;
 	
 	if (totalCidades == 0) {
 	    cout << "Antes de cadastrar um tutor, cadastre pelo menos uma cidade para esse tutor.\n\n";
@@ -142,7 +141,8 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 	    return;
 	}
 
-	cout << "\n ----- Cadastro de Tutor ------\n\n";
+	cout << "\n ----- Cadastro de Tutor ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
 
 	while(true){
 		cout << "Código do tutor: ";
@@ -154,6 +154,8 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 			cout << "Entrada inválida! Digite apenas números.\n\n";
 			continue;
 		}
+		
+		if(verificarCancelamento(novoTutor.codigo)) return;
 		cin.ignore();
 		
 		if(verificarExistencia(tutores, totalTutores, novoTutor.codigo)) {
@@ -166,9 +168,11 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 
 	cout << "Nome: ";
 	getline(cin, novoTutor.nome);
+	if(verificarCancelamento(novoTutor.nome)) return;
 
 	cout << "CPF: ";
 	getline(cin, novoTutor.cpf);
+	if(verificarCancelamento(novoTutor.cpf)) return;
 	if(novoTutor.cpf.length() != 11){
 		cout << "CPF inválido. Digite novamente.\n";
 		return;
@@ -176,6 +180,7 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 
 	cout << "Endereço: ";
 	getline(cin, novoTutor.endereco);
+	if(verificarCancelamento(novoTutor.endereco)) return;
 
 	cout << "Códigos das cidades\n";
 			for(int i = 0; i < totalCidades; i++){
@@ -192,6 +197,7 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 			cout << "Entrada inválida! Digite apenas números.\n";
 			continue;
 		}
+		if(verificarCancelamento(novoTutor.codCidade)) return;
 	
 		bool encontrado = false;
 		for(int i = 0; i < totalCidades; i++){
@@ -218,7 +224,8 @@ void cadastrarTutor(Tutor tutores[], int& totalTutores, Cidade cidades[], int to
 void cadastrarRaca(Raca racas[], int& totalRacas){
 	Raca novaRaca;
 	
-	cout << "\n ----- Cadastro de Raça ------\n\n";
+	cout << "\n ----- Cadastro de Raça ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
 	
 	while(true){
 		cout << "Código da raça: ";
@@ -230,6 +237,8 @@ void cadastrarRaca(Raca racas[], int& totalRacas){
 			cout << "Entrada inválida! Digite apenas números.\n\n";
 			continue;
 		}
+		
+		if(verificarCancelamento(novaRaca.codigo)) return;
 		cin.ignore();
 		
 		if(verificarExistencia(racas, totalRacas, novaRaca.codigo)) {
@@ -242,6 +251,7 @@ void cadastrarRaca(Raca racas[], int& totalRacas){
 
 	cout << "Descrição: ";
 	getline(cin, novaRaca.descricao);
+	if(verificarCancelamento(novaRaca.descricao)) return;
 	
 	racas[totalRacas] = novaRaca;
 	totalRacas++;
@@ -262,7 +272,8 @@ void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int tota
 	    return;
 	}
 
-	cout << "\n ----- Cadastro de Animal ------\n\n";
+	cout << "\n ----- Cadastro de Animal ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
 	
 	while(true){
 		cout << "Código do Animal: ";
@@ -274,6 +285,8 @@ void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int tota
 			cout << "Entrada inválida! Digite apenas números.\n\n";
 			continue;
 		}
+		
+		if(verificarCancelamento(novoAnimal.codigo)) return;
 		cin.ignore();
 		
 		if(verificarExistencia(animais, totalAnimais, novoAnimal.codigo)) {
@@ -286,6 +299,7 @@ void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int tota
 
 	cout << "Nome: ";
 	getline(cin, novoAnimal.nome);
+	if(verificarCancelamento(novoAnimal.nome)) return;
 
 	cout << "Códigos das raças: \n";
 		for(int i = 0; i < totalRacas; i++){
@@ -302,6 +316,7 @@ void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int tota
 				cout << "Entrada inválida! Digite apenas números.\n";
 				continue;
 			}
+			if(verificarCancelamento(novoAnimal.codRaca)) return;
 		
 			bool encontrado = false;
 			for(int i = 0; i < totalRacas; i++){
@@ -318,6 +333,8 @@ void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int tota
 
 	cout << "Idade: ";
 	cin >> novoAnimal.idade;
+	if(verificarCancelamento(novoAnimal.idade)) return;
+	
 	while (cin.fail() || novoAnimal.idade < 0) {
 	    cin.clear();
 	    cin.ignore(1000, '\n');
@@ -327,6 +344,7 @@ void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int tota
 
 	cout << "Peso (Kg): ";
 	cin >> novoAnimal.peso;
+	if(verificarCancelamento(novoAnimal.peso)) return;
 	while (cin.fail() || novoAnimal.peso < 0) {
 	    cin.clear();
 	    cin.ignore(1000, '\n');
@@ -349,6 +367,7 @@ void cadastrarAnimal(Animal animais[], int& totalAnimais, Raca racas[], int tota
 				cout << "Entrada inválida! Digite apenas números.\n";
 				continue;
 			}
+			if(verificarCancelamento(novoAnimal.codTutor)) return;
 		
 			bool encontrado = false;			
 			for(int i = 0; i < totalTutores; i++){
@@ -392,7 +411,8 @@ void cadastrarVeterinario(Veterinario veterinarios[], int& totalVets, Cidade cid
 	    return;
 	}
 
-	cout << "\n ----- Cadastro de Veterinário ------\n\n";
+	cout << "\n ----- Cadastro de Veterinário ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
 	
 	while(true){
 		cout << "Código do veterinário: ";
@@ -404,6 +424,8 @@ void cadastrarVeterinario(Veterinario veterinarios[], int& totalVets, Cidade cid
 			cout << "Entrada inválida! Digite apenas números.\n\n";
 			continue;
 		}
+		
+		if(verificarCancelamento(novoVet.codigo)) return;
 		cin.ignore();
 		
 		if(verificarExistencia(veterinarios, totalVets, novoVet.codigo)) {
@@ -416,9 +438,11 @@ void cadastrarVeterinario(Veterinario veterinarios[], int& totalVets, Cidade cid
 
 	cout << "Nome: ";
 	getline(cin, novoVet.nome);
+	if(verificarCancelamento(novoVet.nome)) return;
 
 	cout << "Endereço: ";
 	getline(cin, novoVet.endereco);
+	if(verificarCancelamento(novoVet.endereco)) return;
 
 	cout << "Códigos das cidades\n";
 		for(int i = 0; i < totalCidades; i++){
@@ -435,6 +459,7 @@ void cadastrarVeterinario(Veterinario veterinarios[], int& totalVets, Cidade cid
 				cout << "Entrada inválida! Digite apenas números.\n";
 				continue;
 			}
+			if(verificarCancelamento(novoVet.codCidade)) return;
 		
 			bool encontrado = false;
 			for(int i = 0; i < totalCidades; i++){
@@ -471,6 +496,7 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 	}
 	
 	cout << "\n ----- Realizar Consulta ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
 	cout << "Consulta número " << totalConsultas + 1 << ":\n";
 	
 	cout << "Códigos dos animais \n";
@@ -488,6 +514,8 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 				cout << "Entrada inválida! Digite apenas números.\n";
 				continue;
 			}
+			
+			if(verificarCancelamento(novaConsulta.codAnimal)) return;
 		
 			bool encontrado = false;	
 			for(int i = 0; i < totalAnimais; i++){
@@ -534,6 +562,8 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 				cout << "Entrada inválida! Digite apenas números.\n";
 				continue;
 			}
+			
+			if(verificarCancelamento(novaConsulta.codVet)) return;
 		
 			bool encontrado = false;
 			for(int i = 0; i < totalVets; i++){
@@ -561,9 +591,11 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 	cout << "Data da consulta: ";
 	cin.ignore();
 	getline(cin, novaConsulta.data);
+	if(verificarCancelamento(novaConsulta.data)) return;
 	
 	cout << "Valor: R$ ";
 	cin >> novaConsulta.valor;
+	if(verificarCancelamento(novaConsulta.valor)) return;
 	while (cin.fail() || novaConsulta.valor < 0) {
 	    cin.clear();
 	    cin.ignore(1000, '\n');
@@ -594,10 +626,15 @@ void consultaPorData(Consulta consultas[], int totalConsultas, Animal animais[],
 	}
 	
 	cout << "\n ----- Consultas por datas ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
+	
 	cout << "Data inicial: ";
 	cin >> dataInicio;
+	if(verificarCancelamento(dataInicio)) return;
+	
 	cout << "Data final: ";
 	cin >> dataFinal;
+	if(verificarCancelamento(dataFinal)) return;
 	
 	cout << "\nConsultas realizadas entre " << dataInicio << " e " << dataFinal << ":\n";
 	cout << "Código\t" << "Data\t\t" << "Animal\t\t" << "Veterinário\t\t" << "Valor\t\n";
@@ -651,24 +688,45 @@ void consultaPorVet(Consulta consultas[], int totalConsultas, Animal animais[], 
 	}
 	
 	cout << "\n ----- Consultas por datas ------\n";
+	cout << "(Digite 0 a qualquer momento para cancelar)\n\n";
+	
 	cout << "Data inicial: ";
 	cin >> dataInicio;
+	if(verificarCancelamento(dataInicio)) return;
+	
 	cout << "Data final: ";
 	cin >> dataFinal;
+	if(verificarCancelamento(dataFinal)) return;
 	
 	cout << "Qual veterinário você gostaria buscar: \n";
 		for(int i = 0; i < totalVets; i++){
 			cout << "   [" << veterinarios[i].codigo << "] " << veterinarios[i].nome << endl;
 		}
 		
-		cout << "Selecione um veterinário: ";
-		cin >> vetSelect.codigo;
-		
-		for(int i = 0; i < totalVets; i++){
-			if(veterinarios[i].codigo == vetSelect.codigo){
-				vetSelect = veterinarios[i];
-				break;
+		while(true){
+			cout << "Selecione um veterinário: ";
+			cin >> vetSelect.codigo;
+				
+			if (cin.fail()) {
+				cin.clear();
+				cin.ignore(1000, '\n');
+				cout << "Entrada inválida! Digite apenas números.\n";
+				continue;
 			}
+			
+			if(verificarCancelamento(vetSelect.codigo)) return;
+		
+			bool encontrado = false;	
+			for(int i = 0; i < totalVets; i++){
+				if(veterinarios[i].codigo == vetSelect.codigo){
+					vetSelect = veterinarios[i];
+					encontrado = true;
+					break;
+				}
+			}
+			
+			if (encontrado) break;
+				cout << "Veterinário não encontrado! Tente novamente.\n";
 		}
 	
 	cout << "\nConsultas do veterinário: " << vetSelect.nome;
@@ -722,29 +780,29 @@ int main(){
 	int totalConsultas = 0;
 
 	//	Seeders
-	cidades[0] = {1, "Assis", "SP"};
-	cidades[1] = {2, "Londrina", "PR"};
-	totalCidades = 2;
-		
-	racas[0] = {1, "Poodle"};
-	racas[1] = {2, "Labrador"};
-	totalRacas = 2;
-	
-	tutores[0] = {1, "Caio Venancio", "12345678901", "Rua A, 123", 1};
-	tutores[1] = {2, "Matheus", "98765432100", "Av. B, 456", 2};
-	totalTutores = 2;
-	
-	animais[0] = {1, "Thor", 1, 3, 12.5, 1};
-	animais[1] = {2, "Pipoca", 2, 2, 10.0, 2};
-	totalAnimais = 2;
-
-	veterinarios[0] = {1, "Dr. Carlos", "Rua C, 99", 1};
-	veterinarios[1] = {2, "Dra. Ana", "Av. D, 88", 2};
-	totalVets = 2;
-	
-	consultas[0] = {0, 1, 2, "2025-05-01", 150.50};
-	consultas[1] = {1, 2, 1, "2025-05-15", 224.99};
-	totalConsultas = 2;
+//	cidades[0] = {1, "Assis", "SP"};
+//	cidades[1] = {2, "Londrina", "PR"};
+//	totalCidades = 2;
+//		
+//	racas[0] = {1, "Poodle"};
+//	racas[1] = {2, "Labrador"};
+//	totalRacas = 2;
+//	
+//	tutores[0] = {1, "Caio Venancio", "12345678901", "Rua A, 123", 1};
+//	tutores[1] = {2, "Matheus", "98765432100", "Av. B, 456", 2};
+//	totalTutores = 2;
+//	
+//	animais[0] = {1, "Thor", 1, 3, 12.5, 1};
+//	animais[1] = {2, "Pipoca", 2, 2, 10.0, 2};
+//	totalAnimais = 2;
+//
+//	veterinarios[0] = {1, "Dr. Carlos", "Rua C, 99", 1};
+//	veterinarios[1] = {2, "Dra. Ana", "Av. D, 88", 2};
+//	totalVets = 2;
+//	
+//	consultas[0] = {0, 1, 2, "2025-05-01", 150.50};
+//	consultas[1] = {1, 2, 1, "2025-05-15", 224.99};
+//	totalConsultas = 2;
 
 	int op;
 
