@@ -537,7 +537,7 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 	                }
 	            }
 				
-				cout << "Animal: " << animais[i].nome << " | Raça: " << nomeRaca << " | Tutor: " << nomeTutor << endl;
+				cout << "Animal: " << animais[i].nome << " | Raça: " << nomeRaca << " | Tutor: " << nomeTutor << endl << endl;
 				encontrado = true;
 				break;
 				}
@@ -578,7 +578,7 @@ void gerarConsulta(Consulta consultas[], int& totalConsultas, Animal animais[], 
 						}
 					}
 					
-					cout << "Veterinário: " << veterinarios[i].nome << " | Cidade: " << nomeCidade << endl;
+					cout << "Veterinário: " << veterinarios[i].nome << " | Cidade: " << nomeCidade << endl << endl;
 					encontrado = true;
 					break;
 				}
